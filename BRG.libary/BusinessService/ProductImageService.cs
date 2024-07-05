@@ -12,15 +12,15 @@ namespace BRG.libary.BusinessService
     {
         public class ProductImageInfo
         {
-            public string ProductID { get; set; }
+            public int ProductID { get; set; }
             public Byte Image { get; set; }
-            public int AutoID { get; set; }
+            public int ProductImageID { get; set; }
 
             public void CopyValue(ProductImageInfo info)
             {
                 this.ProductID = info.ProductID;
                 this.Image = info.Image;
-                this.AutoID = info.AutoID;
+                this.ProductImageID = info.ProductImageID;
 
             }
         }
@@ -30,7 +30,7 @@ namespace BRG.libary.BusinessService
             string strSQL = @"
             SELECT[ProductID]
                    ,[Image]
-                   ,[AutoID]
+                   ,[ProductImageID]
             FROM [ProductImage] WHERE 1=1 ";
 
             using (var command = new SqlCommand(strSQL, connection))
@@ -47,9 +47,9 @@ namespace BRG.libary.BusinessService
                     while (reader.Read())
                     {
                         var item = new ProductImageInfo();
-                        item.AutoID = GetDbReaderValue<int>(reader["AutoID"]);
+                        item.ProductImageID = GetDbReaderValue<int>(reader["AutoID"]);
                         item.Image = GetDbReaderValue<byte>(reader["Image"]);
-                        item.ProductID = GetDbReaderValue<string>(reader["ProductID"]);
+                        item.ProductID = GetDbReaderValue<int>(reader["ProductID"]);
                         result.Add(item);
                     }
                 }
@@ -61,20 +61,20 @@ namespace BRG.libary.BusinessService
         {
             string strSQl = @"
             INSERT INTO  [ProductImage]
-                ([AutoID]
+                ([ProductImageID]
                 ,[ProductID]
                 ,[Image]
             VALUES
-                (@AutoID
+                (@ProductImageID
                 ,@ProductID
                 ,@Image)";
 
 
             using (var command = new SqlCommand(strSQl, connection))
             {
-                AddSqlParameter(command, "@ProductID", infoInsert.ProductID, System.Data.SqlDbType.VarChar);
+                AddSqlParameter(command, "@ProductID", infoInsert.ProductID, System.Data.SqlDbType.Int);
                 AddSqlParameter(command, "@Image", infoInsert.Image, System.Data.SqlDbType.Image);
-                AddSqlParameter(command, "@AutoID", infoInsert.AutoID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, "@ProductImageID", infoInsert.ProductImageID, System.Data.SqlDbType.Int);
 
                 WriteLogExecutingCommand(command);
 
@@ -98,13 +98,13 @@ namespace BRG.libary.BusinessService
             string strSql = @"
                UPDATE [ProductImage]
                SET [Image] = @Image
-                        ,[AutoID] = @AuttoID
+                        ,[ProductImageID] = @ProductImageID
                WHERE [ProductID] = @ProductID";
             using (var command = new SqlCommand(strSql, connection))
             {
-                AddSqlParameter(command, @"ProductID", infoUpdate.ProductID, System.Data.SqlDbType.VarChar);
+                AddSqlParameter(command, @"ProductID", infoUpdate.ProductID, System.Data.SqlDbType.Int);
                 AddSqlParameter(command, @"Image", infoUpdate.Image, System.Data.SqlDbType.Image);
-                AddSqlParameter(command, @"AutoID", infoUpdate.AutoID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, @"AutoID", infoUpdate.ProductImageID, System.Data.SqlDbType.Int);
                 WriteLogExecutingCommand(command);
                 return command.ExecuteNonQuery() > 0;
             }

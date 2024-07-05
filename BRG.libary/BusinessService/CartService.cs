@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,16 +13,20 @@ namespace BRG.libary.BusinessService
     {
         public class CartInfo
         {
-            public int AutoID { get; set; }
-            public string CustomerID { get; set; }
-            public string ProductID { get; set; }
+            public int CartID { get; set; }
+            public int CustomerID { get; set; }
+            public int ProductID { get; set; }
+
+            public string ProductName { get; set; }
+            public Decimal Price { get; set; }
+
             public int Amount { get; set; }
 
             public void CopyValue(CartInfo info)
             {
                 this.CustomerID = info.CustomerID;
                 this.ProductID = info.ProductID;
-                this.AutoID = info.AutoID;
+                this.CartID = info.CartID;
                 this.Amount = info.Amount;
             }
         }
@@ -31,7 +36,7 @@ namespace BRG.libary.BusinessService
             string strSQL = @"
             SELECT [CustomerID]
                     ,[ProductID]
-                    ,[AutoID]
+                    ,[CartID]
                     ,[Amount]
  
             FROM [Cart] WHERE 1=1 ";
@@ -51,11 +56,11 @@ namespace BRG.libary.BusinessService
                     while (reader.Read())
                     {
                         var item = new CartInfo();
-                        item.ProductID = GetDbReaderValue<string>(reader["ProductID"]);
-                        item.CustomerID = GetDbReaderValue<string>(reader["CustomerID"]);
-                        item.AutoID = GetDbReaderValue<int>(reader["AutoID"]);
+                        item.ProductID = GetDbReaderValue<int>(reader["ProductID"]);
+                        item.CustomerID = GetDbReaderValue<int>(reader["CustomerID"]);
+                        item.CartID = GetDbReaderValue<int>(reader["CartID"]);
                         item.Amount = GetDbReaderValue<int>(reader["Amount"]);
-                  
+
                         result.Add(item);
                     }
                 }
@@ -64,27 +69,66 @@ namespace BRG.libary.BusinessService
             return result;
         }
 
+        public List<CartInfo> GetCartCustomer(SqlConnection connection, int strSearch)
+        {
+
+            var result = new List<CartInfo>();
+            string strSQL = @"
+            SELECT C.CartID,
+                C.[CustomerID]
+                ,C.[ProductID]
+                ,P.ProductName
+                ,P.Price
+                ,C.[Amount]
+ 
+                FROM [Cart] AS C 
+                INNER JOIN Product AS P ON C.ProductID = P.ProductID
+
+                WHERE C.CustomerID = @CustomerID ";
+            using (var command = new SqlCommand(strSQL, connection))
+            {
+                    
+                    AddSqlParameter(command, "@CustomerID", strSearch, System.Data.SqlDbType.Int);
+
+                WriteLogExecutingCommand(command);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var item = new CartInfo();
+                        item.ProductID = GetDbReaderValue<int>(reader["ProductID"]);
+                        item.CustomerID = GetDbReaderValue<int>(reader["CustomerID"]);
+                        item.CartID = GetDbReaderValue<int>(reader["CartID"]);
+                        item.Amount = GetDbReaderValue<int>(reader["Amount"]);
+                        item.ProductName = GetDbReaderValue<string>(reader["ProductName"]);
+                        item.Price = GetDbReaderValue<Decimal>(reader["Price"]);
+
+                        result.Add(item);
+                    }
+                }
+            }
+            return result;
+        }
+        
         public bool InsertCart(SqlConnection connection, CartInfo infoInsert)
         {
             string strSQL = @"
             INSERT INTO [Cart]
                 ([CustomerID]
                 ,[ProductID]
-                ,[AutoID]
-                ,[Amount]
+                ,[Amount])
                 
             VALUES
                 (@CustomerID
                 ,@ProductID
-                ,@AutoID
-                ,@Amount";
+                ,@Amount)";
 
             using (var command = new SqlCommand(strSQL, connection))
             {
-                AddSqlParameter(command, "@CustomerID", infoInsert.CustomerID, System.Data.SqlDbType.VarChar);
-                AddSqlParameter(command, "@ProductID", infoInsert.ProductID, System.Data.SqlDbType.NVarChar);
-                AddSqlParameter(command, "@AutoID", infoInsert.AutoID, System.Data.SqlDbType.NVarChar);
-                AddSqlParameter(command, "@Amount", infoInsert.Amount, System.Data.SqlDbType.VarChar);
+                AddSqlParameter(command, "@CustomerID", infoInsert.CustomerID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, "@ProductID", infoInsert.ProductID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, "@Amount", infoInsert.Amount, System.Data.SqlDbType.Int);
                 
 
                 WriteLogExecutingCommand(command);
@@ -93,14 +137,14 @@ namespace BRG.libary.BusinessService
             }
         }
 
-        public bool DeleteCart(SqlConnection connection, string AutoID)
+        public bool DeleteCart(SqlConnection connection, string CartID)
         {
             string strSQL = @"
-            DELETE [AutoID] WHERE AutoID = @AutoID";
+            DELETE [CartID] WHERE CartID = @CartID";
 
             using (var command = new SqlCommand(strSQL, connection))
             {
-                AddSqlParameter(command, "@AutoID", AutoID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, "@CartID", CartID, System.Data.SqlDbType.Int);
                 WriteLogExecutingCommand(command);
 
                 return command.ExecuteNonQuery() > 0;
@@ -115,13 +159,13 @@ namespace BRG.libary.BusinessService
                   ,[ProductID] = @ProductID
                   ,[Amount] = @Amount
                   
-            WHERE [AutoID] = @AutoID";
+            WHERE [CartID] = @CartID";
 
             using (var command = new SqlCommand(strSQL, connection))
             {
-                AddSqlParameter(command, "@AutoID", infoUpdate.AutoID, System.Data.SqlDbType.Int);
-                AddSqlParameter(command, "@CustomerID", infoUpdate.CustomerID, System.Data.SqlDbType.VarChar);
-                AddSqlParameter(command, "@ProductID", infoUpdate.ProductID, System.Data.SqlDbType.VarChar);
+                AddSqlParameter(command, "@CartID", infoUpdate.CartID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, "@CustomerID", infoUpdate.CustomerID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, "@ProductID", infoUpdate.ProductID, System.Data.SqlDbType.Int);
                 AddSqlParameter(command, "@Amount", infoUpdate.Amount, System.Data.SqlDbType.Int);
 
                 WriteLogExecutingCommand(command);

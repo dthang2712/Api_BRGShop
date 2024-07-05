@@ -8,14 +8,12 @@ namespace BRG.libary.BusinessService
         public class CategoryInfo
         {
             public string CategoryName { get; set; }
-            public string CatergoryID { get; set; }
-            public int AutoID { get; set; }
+            public int CategoryID { get; set; }
 
             public void CopyValue(CategoryInfo info)
             {
                 this.CategoryName = info.CategoryName;
-                this.CatergoryID = info.CatergoryID;
-                this.AutoID = info.AutoID;
+                this.CategoryID = info.CategoryID;
 
             }
         }
@@ -23,9 +21,8 @@ namespace BRG.libary.BusinessService
         {
             var result = new List<CategoryInfo>();
             string strSQL = @"
-            SELECT[CategoryID]
+            SELECT [CategoryID]
                    ,[CategoryName]
-                   ,[AutoID]
             FROM [Category] WHERE 1=1 ";
 
             using (var command = new SqlCommand(strSQL, connection))
@@ -42,9 +39,8 @@ namespace BRG.libary.BusinessService
                     while (reader.Read())
                     {
                         var item = new CategoryInfo();
-                        item.AutoID = GetDbReaderValue<int>(reader["AutoID"]);
                         item.CategoryName = GetDbReaderValue<string>(reader["CategoryName"]);
-                        item.CatergoryID = GetDbReaderValue<string>(reader["CategoryID"]);
+                        item.CategoryID = GetDbReaderValue<int>(reader["CategoryID"]);
                         result.Add(item);
                     }
                 }
@@ -56,20 +52,17 @@ namespace BRG.libary.BusinessService
         {
             string strSQl = @"
             INSERT INTO  [Category]
-                ([AutoID]
-                ,[CatogoryID]
+                ([CategoryID]
                 ,[CatogoryName]
             VALUES
-                (@AutoID
-                ,@CatogoryID
-                ,@CatogoryName)";
+                (@CategoryID
+                ,@CategoryName)";
 
 
             using (var command = new SqlCommand(strSQl, connection))
             {
-                AddSqlParameter(command, "@CategoryID", infoInsert.CatergoryID ,System.Data.SqlDbType.VarChar);
+                AddSqlParameter(command, "@CategoryID", infoInsert.CategoryID ,System.Data.SqlDbType.Int);
                 AddSqlParameter(command, "@CategoryName", infoInsert.CategoryName, System.Data.SqlDbType.NVarChar);
-                AddSqlParameter(command, "@AutoID", infoInsert.AutoID, System.Data.SqlDbType.Int);
 
                 WriteLogExecutingCommand(command);
 
@@ -93,13 +86,11 @@ namespace BRG.libary.BusinessService
             string strSql = @"
                UPDATE [Category]
                SET [CategoryName] = @CategoryName
-                        ,[AutoID] = @AuttoID
                WHERE [CategoryID] = @CategoryID";
             using (var command = new SqlCommand(strSql, connection))
             {
-                AddSqlParameter(command, @"CategoryID" ,infoUpdate.CatergoryID,System.Data.SqlDbType.VarChar);
+                AddSqlParameter(command, @"CategoryID" ,infoUpdate.CategoryID,System.Data.SqlDbType.Int);
                 AddSqlParameter(command, @"CategoryName", infoUpdate.CategoryName, System.Data.SqlDbType.NVarChar);
-                AddSqlParameter(command, @"AutoID", infoUpdate.AutoID, System.Data.SqlDbType.Int);
                 WriteLogExecutingCommand(command);
                 return command.ExecuteNonQuery() > 0; 
             } 

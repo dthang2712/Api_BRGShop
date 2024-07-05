@@ -36,6 +36,24 @@ namespace Api_BRGShop.Controllers
 
         }
         [HttpGet]
+        [Route("api/manager/Product/get-category")]
+        public IActionResult GetListProductCategory(String CategoryID) {
+            try
+            {
+                using (var connection = DefaultConnectionFactory.BRGShop.GetConnection())
+                {
+                    List<ProductService.ProductInfo> ListProductInfo = ProductService.GetInstance().GetListProductCategory(connection, CategoryID);
+                    return Ok(ListProductInfo);
+                }
+            }
+            catch (Exception ex) 
+            {
+         
+                _logger.Error(ex.ToString());
+                return StatusCode(500);
+            }
+        }
+        [HttpGet]
         [Route("api/maneger/Product/search")]
         public IActionResult SearchProduct(string search)
         {

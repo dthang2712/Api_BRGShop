@@ -35,6 +35,26 @@ namespace Api_BRGShop.Controllers
                 return StatusCode(500); 
             }
         }
+        [HttpGet]
+        [Route("api/manager/Cart/get-product-customer")]
+
+        public IActionResult GetCartCustomer(int CustomerID)
+        {
+            try
+            {
+                using (var connection = DefaultConnectionFactory.BRGShop.GetConnection())
+                {
+                    List<CartService.CartInfo> listCartInfo = CartService.GetInstance().GetCartCustomer(connection , CustomerID);
+
+                    return Ok(listCartInfo);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                return StatusCode(500);
+            }
+        }
 
         [HttpGet]
         [Route("api/manager/Cart/search")]

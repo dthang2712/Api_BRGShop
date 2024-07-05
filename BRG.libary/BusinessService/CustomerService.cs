@@ -20,9 +20,8 @@ namespace BRG.libary.BusinessService
 
         public class CustomerInfo
         {
-   
+            public int CustomerID { get; set; }
             public string Password { get; set; }
-            public int? AutoID { get; set; }
             public string FullName { get; set; }
             private DateTime DateOfBirth_Format { get; set; }
             public string DateOfBirth { get; set; }
@@ -33,7 +32,7 @@ namespace BRG.libary.BusinessService
 
             public void CopyValue(CustomerInfo info)
             {
-                this.AutoID = info.AutoID;
+                this.CustomerID = info.CustomerID;
                 this.FullName = info.FullName;
                 this.Email = info.Email;
                 this.PhoneNumber = info.PhoneNumber;
@@ -47,7 +46,7 @@ namespace BRG.libary.BusinessService
         {
             var result = new List<CustomerInfo>();
             string strSQL = @"
-            SELECT[[AutoID]
+            SELECT[CustomerID]
                    ,[FullName]
                    ,[Email]
                    ,[PhoneNumber]
@@ -71,7 +70,7 @@ namespace BRG.libary.BusinessService
                     while (reader.Read())
                     {
                         var item = new CustomerInfo();
-                        item.AutoID = GetDbReaderValue<int>(reader["AutoID"]);
+                        item.CustomerID = GetDbReaderValue<int>(reader["CustomerID"]);
                         item.FullName = GetDbReaderValue<string>(reader["FullName"]);
                         item.Email = GetDbReaderValue<string>(reader["Email"]);
                         item.PhoneNumber = GetDbReaderValue<string>(reader["PhoneNumber"]);
@@ -89,7 +88,7 @@ namespace BRG.libary.BusinessService
         {
             var result = new CustomerInfo();
             string strSQL = @"
-            SELECT [AutoID]
+            SELECT [CustomerID]
                    ,[FullName]
                    ,[Email]
                    ,[PhoneNumber]
@@ -111,7 +110,7 @@ namespace BRG.libary.BusinessService
                     while (reader.Read())
                     {
                         var item = new CustomerInfo();
-                        result.AutoID = GetDbReaderValue<int?>(reader["AutoID"]);
+                        result.CustomerID = GetDbReaderValue<int>(reader["CustomerID"]);
                         result.FullName = GetDbReaderValue<string>(reader["FullName"]);
                         result.Email = GetDbReaderValue<string>(reader["Email"]);
                         result.PhoneNumber = GetDbReaderValue<string>(reader["PhoneNumber"]);
@@ -129,7 +128,8 @@ namespace BRG.libary.BusinessService
         {
             string strSQl = @"
             INSERT INTO [Customer]
-                ([FullName]
+                ([CustomerID]
+                ,[FullName]
                 ,[Email]
                 ,[PhoneNumber]
                 ,[DateOfBirth]
@@ -137,6 +137,7 @@ namespace BRG.libary.BusinessService
                 ,[Password])
             VALUES
                 (@FullName
+                ,CustomerID
                 ,@Email
                 ,@PhoneNumber
                 ,@DateOfBirth
@@ -147,7 +148,7 @@ namespace BRG.libary.BusinessService
 
             using (var command = new SqlCommand(strSQl, connection))
             {
-             
+                AddSqlParameter(command, "@CustomerID", infoInsert.CustomerID, System.Data.SqlDbType.Int);
                 AddSqlParameter(command, "@FullName", infoInsert.FullName, System.Data.SqlDbType.NVarChar);
                 AddSqlParameter(command, "@Email", infoInsert.Email, System.Data.SqlDbType.VarChar);
                 AddSqlParameter(command, "@PhoneNumber", infoInsert.PhoneNumber, System.Data.SqlDbType.VarChar);
@@ -196,7 +197,7 @@ namespace BRG.libary.BusinessService
         {
             string strSql = @"
                UPDATE [Customer]
-               SET [AutoID] = @AuttoID                      
+               SET [CustomerID] = @CustomerID                      
                         ,[FullName] = @FullName
                         ,[Email] = @Email
                         ,[DateOfBirth] = @DateOfBirth
@@ -212,15 +213,11 @@ namespace BRG.libary.BusinessService
                 AddSqlParameter(command, "@DateOfBirth", infoUpdate.DateOfBirth, System.Data.SqlDbType.DateTime);
                 AddSqlParameter(command, "@Sex", infoUpdate.Sex, System.Data.SqlDbType.NVarChar);
                 AddSqlParameter(command, "@Password", infoUpdate.Password, System.Data.SqlDbType.VarChar);
-                AddSqlParameter(command, "@AutoID", infoUpdate.AutoID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, "@CustomerID", infoUpdate.CustomerID, System.Data.SqlDbType.Int);
                 WriteLogExecutingCommand(command);
                 return command.ExecuteNonQuery() > 0;
             }
 
         }
-
-
-
-
     }
 }

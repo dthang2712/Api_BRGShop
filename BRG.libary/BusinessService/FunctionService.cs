@@ -12,18 +12,15 @@ namespace BRG.libary.BusinessService
     {
         public class FunctionInfo
         {
-            public string FunctionID { get; set; }
+            public int FunctionID { get; set; }
             public string FunctionName { get; set; }
             public string Description { get; set; }
-            public int AutoID { get; set; }
 
             public void CopyValue(FunctionInfo info)
             {
                 this.FunctionID = info.FunctionID;
                 this.FunctionName = info.FunctionName;
                 this.Description = info.Description;
-
-                this.AutoID = info.AutoID;
 
             }
         }
@@ -34,7 +31,6 @@ namespace BRG.libary.BusinessService
             SELECT[FunctionID]
                    ,[FunctionName]
                    ,[Description]
-                   ,[AutoID]
             FROM [Function] WHERE 1=1 ";
 
             using (var command = new SqlCommand(strSQL, connection))
@@ -51,8 +47,7 @@ namespace BRG.libary.BusinessService
                     while (reader.Read())
                     {
                         var item = new FunctionInfo();
-                        item.AutoID = GetDbReaderValue<int>(reader["AutoID"]);
-                        item.FunctionID = GetDbReaderValue<string>(reader["FunctionID"]);
+                        item.FunctionID = GetDbReaderValue<int>(reader["FunctionID"]);
                         item.FunctionName = GetDbReaderValue<string>(reader["FunctionName"]);
                         item.Description = GetDbReaderValue<string>(reader["Description"]);
                         result.Add(item);
@@ -66,23 +61,20 @@ namespace BRG.libary.BusinessService
         {
             string strSQl = @"
             INSERT INTO  [Function]
-                ([AutoID]
-                ,[FunctionID]
+                ([FunctionID]
                 ,[FunctionName]
                 ,[Description]
             VALUES
-                (@AutoID
-                ,@FunctionID
+                (@FunctionID
                 ,@FunctionName
                 ,Description@)";
 
 
             using (var command = new SqlCommand(strSQl, connection))
             {
-                AddSqlParameter(command, "@FunctionID", infoInsert.FunctionID, System.Data.SqlDbType.VarChar);
+                AddSqlParameter(command, "@FunctionID", infoInsert.FunctionID, System.Data.SqlDbType.Int);
                 AddSqlParameter(command, "@FunctionName", infoInsert.FunctionName, System.Data.SqlDbType.NVarChar);
                 AddSqlParameter(command, "@Description", infoInsert.Description, System.Data.SqlDbType.NVarChar);
-                AddSqlParameter(command, "@AutoID", infoInsert.AutoID, System.Data.SqlDbType.Int);
 
                 WriteLogExecutingCommand(command);
 
@@ -107,14 +99,12 @@ namespace BRG.libary.BusinessService
                UPDATE [Function]
                SET [FunctionName] = @FunctionName
                         ,[Description] = @Description
-                        ,[AutoID] = @AuttoID
                WHERE [FunctionID] = @FunctionID";
             using (var command = new SqlCommand(strSql, connection))
             {
-                AddSqlParameter(command, "@FunctionID", infoUpdate.FunctionID, System.Data.SqlDbType.VarChar);
+                AddSqlParameter(command, "@FunctionID", infoUpdate.FunctionID, System.Data.SqlDbType.Int);
                 AddSqlParameter(command, "@FunctionName", infoUpdate.FunctionName, System.Data.SqlDbType.NVarChar);
                 AddSqlParameter(command, "@Description", infoUpdate.Description, System.Data.SqlDbType.NVarChar);
-                AddSqlParameter(command, "@AutoID", infoUpdate.AutoID, System.Data.SqlDbType.Int);
                 WriteLogExecutingCommand(command);
                 return command.ExecuteNonQuery() > 0;
             }

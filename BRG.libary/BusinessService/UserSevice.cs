@@ -12,14 +12,13 @@ namespace BRG.libary.BusinessService
     {
         public class UserInfo
         {
-            public string UserID { get; set; }
+            public int UserID { get; set; }
             public string UserName { get; set; }
             public string Password { get; set; }
             public string FullName { get; set; }
             public DateTime DateOfBirth { get; set; }
             public string Sex { get; set; }
             public string PhoneNumber { get; set; }
-            public int AutoID { get; set; }
 
             public void CopyValue(UserInfo info)
             {
@@ -30,7 +29,6 @@ namespace BRG.libary.BusinessService
                 this.DateOfBirth = info.DateOfBirth;
                 this.Sex = info.Sex;
                 this.PhoneNumber = info.PhoneNumber;
-                this.AutoID = info.AutoID;
 
             }
         }
@@ -45,7 +43,6 @@ namespace BRG.libary.BusinessService
                    ,[DateOfBirth]
                    ,[Sex]
                    ,[PhoneNumber]
-                   ,[AutoID]
             FROM [User] WHERE 1=1 ";
 
             using (var command = new SqlCommand(strSQL, connection))
@@ -62,8 +59,7 @@ namespace BRG.libary.BusinessService
                     while (reader.Read())
                     {
                         var item = new UserInfo();
-                        item.AutoID = GetDbReaderValue<int>(reader["AutoID"]);
-                        item.UserID = GetDbReaderValue<string>(reader["UserID"]);
+                        item.UserID = GetDbReaderValue<int>(reader["UserID"]);
                         item.UserName = GetDbReaderValue<string>(reader["UserName"]);
                         item.Password = GetDbReaderValue<string>(reader["Password"]);
                         item.FullName = GetDbReaderValue<string>(reader["FullName"]);
@@ -81,8 +77,7 @@ namespace BRG.libary.BusinessService
         {
             string strSQl = @"
             INSERT INTO  [User]
-                ([AutoID]
-                ,[UserID]
+                ([UserID]
                 ,[UserName]
                 ,[Password]
                 ,[FullName]
@@ -90,8 +85,7 @@ namespace BRG.libary.BusinessService
                 ,[Sex]
                 ,[PhoneNumber]
             VALUES
-                (@AutoID
-                ,@UserID
+                (@UserID
                 ,@UserName
                 ,@Password
                 ,@FullName
@@ -102,14 +96,13 @@ namespace BRG.libary.BusinessService
 
             using (var command = new SqlCommand(strSQl, connection))
             {
-                AddSqlParameter(command, "@UserID", infoInsert.UserID, System.Data.SqlDbType.VarChar);
+                AddSqlParameter(command, "@UserID", infoInsert.UserID, System.Data.SqlDbType.Int);
                 AddSqlParameter(command, "@UserName", infoInsert.UserName, System.Data.SqlDbType.NVarChar);
                 AddSqlParameter(command, "@Password", infoInsert.Password, System.Data.SqlDbType.VarChar);
                 AddSqlParameter(command, "@FullName", infoInsert.FullName, System.Data.SqlDbType.NVarChar);
                 AddSqlParameter(command, "@Sex", infoInsert.Sex, System.Data.SqlDbType.VarChar);
                 AddSqlParameter(command, "@DateOfBirth", infoInsert.DateOfBirth, System.Data.SqlDbType.Date);
                 AddSqlParameter(command, "@PhoneNumber", infoInsert.PhoneNumber, System.Data.SqlDbType.VarChar);
-                AddSqlParameter(command, "@AutoID", infoInsert.AutoID, System.Data.SqlDbType.Int);
 
                 WriteLogExecutingCommand(command);
 
@@ -138,18 +131,16 @@ namespace BRG.libary.BusinessService
                         ,[Sex] = @Sex
                         ,[DateOfBirth] = @DateOfBirth
                         ,[PhoneNumber] = @PhoneNumber
-                        ,[AutoID] = @AuttoID
                WHERE [UserID] = @UserID";
             using (var command = new SqlCommand(strSql, connection))
             {
-                AddSqlParameter(command, "@UserID", infoUpdate.UserID, System.Data.SqlDbType.VarChar);
+                AddSqlParameter(command, "@UserID", infoUpdate.UserID, System.Data.SqlDbType.Int);
                 AddSqlParameter(command, "@UserName", infoUpdate.UserName, System.Data.SqlDbType.NVarChar);
                 AddSqlParameter(command, "@Password", infoUpdate.Password, System.Data.SqlDbType.VarChar);
                 AddSqlParameter(command, "@FullName", infoUpdate.FullName, System.Data.SqlDbType.NVarChar);
                 AddSqlParameter(command, "@Sex", infoUpdate.Sex, System.Data.SqlDbType.VarChar);
                 AddSqlParameter(command, "@DateOfBirth", infoUpdate.DateOfBirth, System.Data.SqlDbType.Date);
                 AddSqlParameter(command, "@PhoneNumber", infoUpdate.PhoneNumber, System.Data.SqlDbType.VarChar);
-                AddSqlParameter(command, "@AutoID", infoUpdate.AutoID, System.Data.SqlDbType.Int);
                 WriteLogExecutingCommand(command);
                 return command.ExecuteNonQuery() > 0;
             }

@@ -12,17 +12,17 @@ namespace BRG.libary.BusinessService
     {
         public class OrderDetailInfo
         {
-            public string OrderID { get; set; }
-            public string ProductID { get; set; }
+            public int OrderID { get; set; }
+            public int ProductID { get; set; }
             public int Amount { get; set; }
-            public int AutoID { get; set; }
+            public int OrderDetailID { get; set; }
 
             public void CopyValue(OrderDetailInfo info)
             {
                 this.OrderID = info.OrderID;
                 this.ProductID = info.ProductID;
                 this.Amount = info.Amount;
-                this.AutoID = info.AutoID;
+                this.OrderDetailID = info.OrderDetailID;
 
             }
         }
@@ -33,7 +33,7 @@ namespace BRG.libary.BusinessService
             SELECT[OrderID]
                    ,[ProductID] 
                    ,[Amount]
-                   ,[AutoID]
+                   ,[OrderDetailID]
             FROM [OrderDetail] WHERE 1=1 ";
 
             using (var command = new SqlCommand(strSQL, connection))
@@ -50,10 +50,10 @@ namespace BRG.libary.BusinessService
                     while (reader.Read())
                     {
                         var item = new OrderDetailInfo();
-                        item.AutoID = GetDbReaderValue<int>(reader["AutoID"]);
-                        item.ProductID = GetDbReaderValue<string>(reader["ProductID"]);
+                        item.OrderDetailID = GetDbReaderValue<int>(reader["OrderDetailID"]);
+                        item.ProductID = GetDbReaderValue<int>(reader["ProductID"]);
                         item.Amount = GetDbReaderValue<int>(reader["Amount"]);
-                        item.OrderID = GetDbReaderValue<string>(reader["OrderID"]);
+                        item.OrderID = GetDbReaderValue<int>(reader["OrderID"]);
                         result.Add(item);
                     }
                 }
@@ -65,12 +65,12 @@ namespace BRG.libary.BusinessService
         {
             string strSQl = @"
             INSERT INTO  [OrderDetail]
-                ([AutoID]
+                ([OrderDetailID]
                 ,[ProductID]
                 ,[Amount]
                 ,[OrderID]
             VALUES
-                (@AutoID
+                (@OrderDetailID
                 ,@ProductID
                 ,@OrderID
                 ,@Amount)";
@@ -78,10 +78,10 @@ namespace BRG.libary.BusinessService
 
             using (var command = new SqlCommand(strSQl, connection))
             {
-                AddSqlParameter(command, "@ProductID", infoInsert.ProductID, System.Data.SqlDbType.VarChar);
-                AddSqlParameter(command, "@OderID", infoInsert.OrderID, System.Data.SqlDbType.NVarChar);
+                AddSqlParameter(command, "@ProductID", infoInsert.ProductID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, "@OderID", infoInsert.OrderID, System.Data.SqlDbType.Int);
                 AddSqlParameter(command, "@Amount", infoInsert.Amount, System.Data.SqlDbType.Int);
-                AddSqlParameter(command, "@AutoID", infoInsert.AutoID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, "@OrderDetailID", infoInsert.OrderDetailID, System.Data.SqlDbType.Int);
 
                 WriteLogExecutingCommand(command);
 
@@ -105,15 +105,15 @@ namespace BRG.libary.BusinessService
             string strSql = @"
                UPDATE [OrderDetail]
                SET [Amount] = @Amount
-                        ,[AutoID] = @AuttoID
+                        ,[OrderDetailID] = @OrderDetailID
                         ,[OrderID] = @OrderID
                WHERE [ProductID] = @ProductID";
             using (var command = new SqlCommand(strSql, connection))
             {
-                AddSqlParameter(command, @"ProductID", infoUpdate.ProductID, System.Data.SqlDbType.VarChar);
+                AddSqlParameter(command, @"ProductID", infoUpdate.ProductID, System.Data.SqlDbType.Int);
                 AddSqlParameter(command, @"Amount", infoUpdate.Amount, System.Data.SqlDbType.Int);
-                AddSqlParameter(command, @"OrderID", infoUpdate.OrderID, System.Data.SqlDbType.NVarChar);
-                AddSqlParameter(command, @"AutoID", infoUpdate.AutoID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, @"OrderID", infoUpdate.OrderID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, @"AutoID", infoUpdate.OrderDetailID, System.Data.SqlDbType.Int);
                 WriteLogExecutingCommand(command);
                 return command.ExecuteNonQuery() > 0;
             }

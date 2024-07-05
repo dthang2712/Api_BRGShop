@@ -12,14 +12,13 @@ namespace BRG.libary.BusinessService
     {
         public class OrderInfo
         {
-            public string OrderID { get; set; }
-            public string CustomerID { get; set; }
-            public string CustomerAddressID { get; set; }
+            public int OrderID { get; set; }
+            public int CustomerID { get; set; }
+            public int CustomerAddressID { get; set; }
             public string Note { get; set; }
             public decimal TotalPrice { get; set; }
             public int Status { get; set; }
-            public string UserID { get; set; }
-            public int AutoID { get; set; }
+            public int UserID { get; set; }
 
             public void CopyValue(OrderInfo info)
             {
@@ -30,7 +29,6 @@ namespace BRG.libary.BusinessService
                 this.TotalPrice = info.TotalPrice;
                 this.Status = info.Status;
                 this.UserID = info.UserID;
-                this.AutoID = info.AutoID;
 
             }
         }
@@ -45,7 +43,6 @@ namespace BRG.libary.BusinessService
                    ,[TotalPrice]
                    ,[Status]
                    ,[UserID]
-                   ,[AutoID]
             FROM [Order] WHERE 1=1 ";
 
             using (var command = new SqlCommand(strSQL, connection))
@@ -62,14 +59,13 @@ namespace BRG.libary.BusinessService
                     while (reader.Read())
                     {
                         var item = new OrderInfo();
-                        item.AutoID = GetDbReaderValue<int>(reader["AutoID"]);
-                        item.OrderID = GetDbReaderValue<string>(reader["OrderID"]);
-                        item.CustomerID = GetDbReaderValue<string>(reader["CustomerID"]);
-                        item.CustomerAddressID = GetDbReaderValue<string>(reader["CustomerAddressID"]);
+                        item.OrderID = GetDbReaderValue<int>(reader["OrderID"]);
+                        item.CustomerID = GetDbReaderValue<int>(reader["CustomerID"]);
+                        item.CustomerAddressID = GetDbReaderValue<int>(reader["CustomerAddressID"]);
                         item.Note = GetDbReaderValue<string>(reader["Note"]);
                         item.TotalPrice = GetDbReaderValue<Decimal>(reader["TotalPrice"]);
                         item.Status = GetDbReaderValue<int>(reader["Status"]);
-                        item.UserID = GetDbReaderValue<string>(reader["UserID"]);                       
+                        item.UserID = GetDbReaderValue<int>(reader["UserID"]);                       
                         result.Add(item);
                     }
                 }
@@ -81,8 +77,7 @@ namespace BRG.libary.BusinessService
         {
             string strSQl = @"
             INSERT INTO  [Order]
-                ([AutoID]
-                ,[OrderID]
+                ([OrderID]
                 ,[CustomerID]
                 ,[CustomerAddressID]
                 ,[Note]
@@ -90,8 +85,7 @@ namespace BRG.libary.BusinessService
                 ,[Status]
                 ,[UserID]
             VALUES
-                (@AutoID
-                ,@OrderID
+                (@OrderID
                 ,@CustomerID
                 ,@CustomerAddressID
                 ,@Note
@@ -102,14 +96,13 @@ namespace BRG.libary.BusinessService
 
             using (var command = new SqlCommand(strSQl, connection))
             {
-                AddSqlParameter(command, "@OrderID", infoInsert.OrderID, System.Data.SqlDbType.VarChar);
-                AddSqlParameter(command, "@CustomerID", infoInsert.CustomerID, System.Data.SqlDbType.VarChar);
-                AddSqlParameter(command, "@CustomerAddressID", infoInsert.CustomerAddressID, System.Data.SqlDbType.VarChar);
+                AddSqlParameter(command, "@OrderID", infoInsert.OrderID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, "@CustomerID", infoInsert.CustomerID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, "@CustomerAddressID", infoInsert.CustomerAddressID, System.Data.SqlDbType.Int);
                 AddSqlParameter(command, "@Note", infoInsert.Note, System.Data.SqlDbType.VarChar);
                 AddSqlParameter(command, "@TotalPrice", infoInsert.TotalPrice, System.Data.SqlDbType.Money);
                 AddSqlParameter(command, "@Status", infoInsert.Status, System.Data.SqlDbType.Int);
-                AddSqlParameter(command, "@UserID", infoInsert.UserID, System.Data.SqlDbType.VarChar);
-                AddSqlParameter(command, "@AutoID", infoInsert.AutoID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, "@UserID", infoInsert.UserID, System.Data.SqlDbType.Int);
 
                 WriteLogExecutingCommand(command);
 
@@ -137,7 +130,6 @@ namespace BRG.libary.BusinessService
                         ,[Note] = @Note
                         ,[TotalPrice] = @TotalPrice
                         ,[Status] = @Status
-                        ,[AutoID] = @AuttoID
                         ,[UserID] =@UserID
                         
                WHERE [OrderID] = @OrderID";
@@ -147,9 +139,8 @@ namespace BRG.libary.BusinessService
                 AddSqlParameter(command, @"Note", infoUpdate.Note, System.Data.SqlDbType.NVarChar);
                 AddSqlParameter(command, @"TotalPrice", infoUpdate.TotalPrice, System.Data.SqlDbType.Money);
                 AddSqlParameter(command, @"Status", infoUpdate.Status, System.Data.SqlDbType.Int);
-                AddSqlParameter(command, @"CustomerAddressID", infoUpdate.CustomerAddressID, System.Data.SqlDbType.VarChar);
-                AddSqlParameter(command, @"UserID", infoUpdate.UserID, System.Data.SqlDbType.VarChar);
-                AddSqlParameter(command, @"AutoID", infoUpdate.AutoID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, @"CustomerAddressID", infoUpdate.CustomerAddressID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, @"UserID", infoUpdate.UserID, System.Data.SqlDbType.Int);
                 WriteLogExecutingCommand(command);
                 return command.ExecuteNonQuery() > 0;
             }

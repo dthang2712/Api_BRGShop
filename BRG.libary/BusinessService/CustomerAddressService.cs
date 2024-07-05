@@ -11,22 +11,21 @@ namespace BRG.libary.BusinessService
     public class CustomerAddressService : BaseService<CustomerAddressService>
     {
         public class CustomerAddressInfo
-        {
-            public string CustomerID { get; set; }
-            public string CustomerAddressID { get; set; }
+        {   public int CustomerAddressID { get; set; }
+            public int CustomerID { get; set; }
             public string AddressName { get; set; }
             public string PhoneNumber { get; set; }
             public string City { get; set; }
             public string District { get; set; }
             public string Ward { get; set; }
             public string AddressDetail { get; set; }
-            public string Default { get; set; }
-            public int AutoID { get; set; }
+            public bool Default { get; set; }
 
             public void CopyValue(CustomerAddressInfo info)
-            {
-                this.CustomerID = info.CustomerID;
-                this.CustomerAddressID = info.CustomerAddressID;
+
+
+            {   this.CustomerAddressID = info.CustomerAddressID;
+                this.CustomerID = info.CustomerID;  
                 this.AddressName = info.AddressName;                
                 this.PhoneNumber = info.PhoneNumber;
                 this.City = info.City;
@@ -34,7 +33,6 @@ namespace BRG.libary.BusinessService
                 this.Ward = info.Ward;
                 this.AddressDetail = info.AddressDetail;
                 this.Default = info.Default;
-                this.AutoID = info.AutoID;
 
             }
         }
@@ -44,7 +42,6 @@ namespace BRG.libary.BusinessService
             string strSQL = @"
             SELECT[CustomerID]
                    ,[CustomerAddressID]
-                   ,[CategoryName]
                    ,[AddressName]
                    ,[PhoneNumber]
                    ,[City]
@@ -52,7 +49,6 @@ namespace BRG.libary.BusinessService
                    ,[Ward]
                    ,[AddressDetail]
                    ,[Default]
-                   ,[AutoID]
             FROM [CustomerAddress] WHERE 1=1 ";
 
             using (var command = new SqlCommand(strSQL, connection))
@@ -69,16 +65,15 @@ namespace BRG.libary.BusinessService
                     while (reader.Read())
                     {
                         var item = new CustomerAddressInfo();
-                        item.AutoID = GetDbReaderValue<int>(reader["AutoID"]);
-                        item.CustomerID = GetDbReaderValue<string>(reader["CustomerID"]);
+                        item.CustomerID = GetDbReaderValue<int>(reader["CustomerID"]);
                         item.AddressName = GetDbReaderValue<string>(reader["AddressName"]);
                         item.PhoneNumber = GetDbReaderValue<string>(reader["PhoneNumber"]);
-                        item.CustomerAddressID = GetDbReaderValue<string>(reader["CustomerAddressID"]);
+                        item.CustomerAddressID = GetDbReaderValue<int>(reader["CustomerAddressID"]);
                         item.City = GetDbReaderValue<string>(reader["City"]);
                         item.District = GetDbReaderValue<string>(reader["District"]);
                         item.Ward = GetDbReaderValue<string>(reader["Ward"]);
                         item.AddressDetail = GetDbReaderValue<string>(reader["AddressDetail"]);
-                        item.Default = GetDbReaderValue<string>(reader["Default"]);
+                        item.Default = GetDbReaderValue<bool>(reader["Default"]);
                         
                         result.Add(item);
                     }
@@ -91,9 +86,8 @@ namespace BRG.libary.BusinessService
         {
             string strSQl = @"
             INSERT INTO  [CustomerAddress]
-                ([AutoID]
+                ([CustomerAddressID]
                    ,[CustomerID]
-                   ,[CustomerAddressID]
                    ,[AddressName]
                    ,[PhoneNumber]
                    ,[City]
@@ -102,9 +96,8 @@ namespace BRG.libary.BusinessService
                    ,[AddressDetail]
                    ,[Default]
             VALUES
-                (@AutoID
+                (@CustomerAddressID
                 ,@CustomerID
-                ,@CustomerAddressID
                 ,@AddressName
                 ,@PhoneNumber
                 ,@City
@@ -116,8 +109,8 @@ namespace BRG.libary.BusinessService
 
             using (var command = new SqlCommand(strSQl, connection))
             {
-                AddSqlParameter(command, "@CustomerID", infoInsert.CustomerID, System.Data.SqlDbType.VarChar);
-                AddSqlParameter(command, "@CustomerAddressID", infoInsert.CustomerAddressID, System.Data.SqlDbType.VarChar);
+                AddSqlParameter(command, "@CustomerAddressID", infoInsert.CustomerAddressID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, "@CustomerID", infoInsert.CustomerID, System.Data.SqlDbType.Int);
                 AddSqlParameter(command, "@PhoneNumber", infoInsert.PhoneNumber, System.Data.SqlDbType.VarChar);
                 AddSqlParameter(command, "@AddressName", infoInsert.AddressName, System.Data.SqlDbType.NVarChar);
                 AddSqlParameter(command, "@City", infoInsert.City, System.Data.SqlDbType.NVarChar);
@@ -134,7 +127,7 @@ namespace BRG.libary.BusinessService
         public bool DeleteCustomerAddress(SqlConnection connection, string CustomerID)
         {
             string strSQL = @"
-               DELETE [CustomerAddress] WHERE CustomerID = @CustomerID";
+               DELETE [CustomerAddress] WHERE CustomerAddressID = @CustomerAddressID";
             using (var command = new SqlCommand(strSQL, connection))
             {
                 AddSqlParameter(command, "@CustomerID", CustomerID, System.Data.SqlDbType.VarChar);
@@ -147,19 +140,19 @@ namespace BRG.libary.BusinessService
         {
             string strSql = @"
                UPDATE [CustomerAddress]
-               SET [CategoryName] = @CategoryName
-                        ,[AutoID] = @AuttoID
-                        ,[AutoID] = @AuttoID
-                        ,[AutoID] = @AuttoID
-                        ,[AutoID] = @AuttoID
-                        ,[AutoID] = @AuttoID
-                        ,[AutoID] = @AuttoID
-                        ,[AutoID] = @AuttoID
-               WHERE [CustomerID] = @CustomerID";
+               SET [CustomerID] = @CustomerID
+                        ,[PhoneNumber] = @PhoneNumber
+                        ,[AddressName] = @AddressName
+                        ,[City] = @City
+                        ,[District] = @District
+                        ,[Ward] = @Ward
+                        ,[AddressDetail] = @AddressDetail
+                        ,[Default] = @Default
+               WHERE [CustomerAddressID] = @CustomerAddressID";
             using (var command = new SqlCommand(strSql, connection))
             {
-                AddSqlParameter(command, "@CustomerID", infoUpdate.CustomerID, System.Data.SqlDbType.VarChar);
-                AddSqlParameter(command, "@CustomerAddressID", infoUpdate.CustomerAddressID, System.Data.SqlDbType.VarChar);
+                AddSqlParameter(command, "@CustomerID", infoUpdate.CustomerID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, "@CustomerAddressID", infoUpdate.CustomerAddressID, System.Data.SqlDbType.Int);
                 AddSqlParameter(command, "@PhoneNumber", infoUpdate.PhoneNumber, System.Data.SqlDbType.VarChar);
                 AddSqlParameter(command, "@AddressName", infoUpdate.AddressName, System.Data.SqlDbType.NVarChar);
                 AddSqlParameter(command, "@City", infoUpdate.City, System.Data.SqlDbType.NVarChar);

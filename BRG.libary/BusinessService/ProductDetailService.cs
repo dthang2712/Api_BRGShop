@@ -12,10 +12,10 @@ namespace BRG.libary.BusinessService
     {
         public class ProductDetailInfo
         {
-            public string ProductID { get; set; }
+            public int ProductID { get; set; }
             public string Key { get; set; }
             public string Description { get; set; }
-            public int AutoID { get; set; }
+            public int ProductDetailID { get; set; }
             
 
             public void CopyValue(ProductDetailInfo info)
@@ -23,7 +23,7 @@ namespace BRG.libary.BusinessService
                 this.ProductID = info.ProductID;
                 this.Key = info.Key;
                 this.Description = info.Description;
-                this.AutoID = info.AutoID;
+                this.ProductDetailID = info.ProductDetailID;
                 
             }
         }
@@ -35,7 +35,7 @@ namespace BRG.libary.BusinessService
             SELECT [ProductID]
                     ,[Key]
                     ,[Description]
-                    ,[AutoID]
+                    ,[ProductDetailID]
                    
             FROM [ProductDetail] WHERE 1=1 ";
 
@@ -54,10 +54,10 @@ namespace BRG.libary.BusinessService
                     while (reader.Read())
                     {
                         var item = new ProductDetailInfo();
-                        item.ProductID = GetDbReaderValue<string>(reader["ProductID"]);
+                        item.ProductID = GetDbReaderValue<int>(reader["ProductID"]);
                         item.Key = GetDbReaderValue<string>(reader["Key"]);
                         item.Description = GetDbReaderValue<string>(reader["Description"]);
-                        item.AutoID = GetDbReaderValue<int>(reader["AutoID"]);
+                        item.ProductDetailID = GetDbReaderValue<int>(reader["ProductDetailID"]);
                         
                         result.Add(item);
                     }
@@ -74,20 +74,20 @@ namespace BRG.libary.BusinessService
                 ([ProductID]
                 ,[Key]
                 ,[Description]
-                ,[AutoID]
+                ,[ProductDetailID]
                
             VALUES
                 (@ProductID
                 ,@Key
                 ,@Description
-                ,@AutoID)";
+                ,@ProductDetailID)";
 
             using (var command = new SqlCommand(strSQL, connection))
             {
-                AddSqlParameter(command, "@ProductID", infoInsert.ProductID, System.Data.SqlDbType.VarChar);
+                AddSqlParameter(command, "@ProductID", infoInsert.ProductID, System.Data.SqlDbType.Int);
                 AddSqlParameter(command, "@Key", infoInsert.Key, System.Data.SqlDbType.NVarChar);
                 AddSqlParameter(command, "@Description", infoInsert.Description, System.Data.SqlDbType.NVarChar);
-                AddSqlParameter(command, "@AutoID", infoInsert.AutoID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, "@ProductDetailID", infoInsert.ProductDetailID, System.Data.SqlDbType.Int);
                 
                 WriteLogExecutingCommand(command);
 
@@ -116,15 +116,15 @@ namespace BRG.libary.BusinessService
             SET 
                    [Key] = @Key
                   ,[Description] = @Description
-                  ,[AutoID] = AutoID
+                  ,[ProductDetailID] = ProductDetailID
             WHERE [ProductID] = @ProductID";
 
             using (var command = new SqlCommand(strSQL, connection))
             {
-                AddSqlParameter(command, "@ProductID", infoUpdate.ProductID, System.Data.SqlDbType.VarChar);
+                AddSqlParameter(command, "@ProductID", infoUpdate.ProductID, System.Data.SqlDbType.Int);
                 AddSqlParameter(command, "@Key", infoUpdate.Key, System.Data.SqlDbType.NVarChar);
                 AddSqlParameter(command, "@Description", infoUpdate.Description, System.Data.SqlDbType.NVarChar);
-                AddSqlParameter(command, "@AutoID", infoUpdate.AutoID, System.Data.SqlDbType.Int);
+                AddSqlParameter(command, "@ProductDetailID", infoUpdate.ProductDetailID, System.Data.SqlDbType.Int);
 
                 WriteLogExecutingCommand(command);
                 return command.ExecuteNonQuery() > 0;
